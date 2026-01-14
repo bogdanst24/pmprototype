@@ -2,8 +2,14 @@ import express from 'express'
 import { AzureOpenAI } from 'openai'
 import dotenv from 'dotenv'
 import { createServer as createViteServer } from 'vite'
+import path from 'path'
+import { fileURLToPath } from 'url'
 
 dotenv.config()
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+const isProduction = process.env.NODE_ENV === 'production'
 
 const app = express()
 app.use(express.json())
@@ -57,13 +63,24 @@ app.post('/api/chat', async (req, res) => {
 })
 
 // Development: Use Vite middleware
+// Production: Serve static files from dist
 async function startServer() {
-  const vite = await createViteServer({
-    server: { middlewareMode: true },
-    appType: 'spa',
-  })
-
-  app.use(vite.middlewares)
+  if (isProduction) {
+    // Serve static files from the dist directory
+    app.use(express.static(path.join(__dirname, 'dist')))
+    
+    // Handle client-side routing - serve index.html for all non-API routes
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(__dirname, 'dist', 'index.html'))
+    })
+  } else {
+    // Development mode with Vite HMR
+    const vite = await createViteServer({
+      server: { middlewareMode: true },
+      appType: 'spa',
+    })
+    app.use(vite.middlewares)
+  }
 
   const port = process.env.PORT || 5173
   app.listen(port, () => {
