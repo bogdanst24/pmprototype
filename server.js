@@ -9,7 +9,8 @@ dotenv.config()
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-const isProduction = process.env.NODE_ENV === 'production'
+// Default to production if NODE_ENV not set but PORT is (common in hosting platforms)
+const isProduction = process.env.NODE_ENV === 'production' || !!process.env.RENDER
 
 const app = express()
 app.use(express.json())
