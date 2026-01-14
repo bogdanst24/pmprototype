@@ -4,13 +4,17 @@ import dotenv from 'dotenv'
 import { createServer as createViteServer } from 'vite'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import fs from 'fs'
 
 dotenv.config()
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-// Default to production if NODE_ENV not set but PORT is (common in hosting platforms)
-const isProduction = process.env.NODE_ENV === 'production' || !!process.env.RENDER
+// Auto-detect production: check if dist folder exists (built) or explicit NODE_ENV
+const distExists = fs.existsSync(path.join(__dirname, 'dist', 'index.html'))
+const isProduction = process.env.NODE_ENV === 'production' || distExists
+
+console.log(`Starting server in ${isProduction ? 'PRODUCTION' : 'DEVELOPMENT'} mode`)
 
 const app = express()
 app.use(express.json())
