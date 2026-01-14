@@ -18,10 +18,10 @@ app.use(express.json())
 const client = new AzureOpenAI({
   endpoint: process.env.AZURE_OPENAI_ENDPOINT,
   apiKey: process.env.AZURE_OPENAI_API_KEY,
-  apiVersion: process.env.AZURE_OPENAI_API_VERSION || '2024-08-01-preview',
+  apiVersion: process.env.AZURE_OPENAI_API_VERSION || '2025-04-01-preview',
 })
 
-const deploymentName = process.env.AZURE_OPENAI_DEPLOYMENT_NAME || 'gpt-4'
+const deploymentName = process.env.AZURE_OPENAI_DEPLOYMENT_NAME || 'gpt-5.1'
 
 // System prompt for the presentation assistant
 const systemPrompt = `You are a helpful presentation creation assistant. Your role is to help users create professional presentations. 
